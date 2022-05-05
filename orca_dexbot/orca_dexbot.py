@@ -77,7 +77,8 @@ class OrcaDexbot:
         tx = self.create_transaction(msgs)
         logger.debug(tx)
 
-    def test_transaction_anchor_aust(self, amount, premium_slot, ltv, cumulative_value):
+    def transaction_anchor_aust(self, amount, premium_slot, ltv, cumulative_value):
+        # TODO:UST to aUST conversion
         msg = str(
             {
                 "submit_bid": {
