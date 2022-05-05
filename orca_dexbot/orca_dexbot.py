@@ -26,22 +26,22 @@ logger.addHandler(handler)
 class OrcaDexbot():
     def __init__(self, network, mnemonic):
         if network == 'mainnet':
-            self.terra = LCDClient(COLUMBUS[0], COLUMBUS[1])
+            self._terra = LCDClient(COLUMBUS[0], COLUMBUS[1])
         elif network == 'testnet':
-            self.terra = LCDClient(BOMBAY[0], BOMBAY[1])
-        self.wallet = self.terra.wallet(MnemonicKey(mnemonic=mnemonic))
+            self._terra = LCDClient(BOMBAY[0], BOMBAY[1])
+        self._wallet = self._terra.wallet(MnemonicKey(mnemonic=mnemonic))
 
-        self._ACC_ADDRESS = self.wallet.key.acc_address
+        self._ACC_ADDRESS = self._wallet.key.acc_address
         self._contract = Contract()
 
     def usd_to_uusd(self, usd) -> str:
         return str(usd*1000000)
 
     def create_transaction(self, msgs) -> BlockTxBroadcastResult:
-        tx = self.wallet.create_and_sign_tx(CreateTxOptions(
+        tx = self._wallet.create_and_sign_tx(CreateTxOptions(
             msgs=msgs,
         ))
-        result = self.terra.tx.broadcast(tx)
+        result = self._terra.tx.broadcast(tx)
         return result
     
     def test_transaction(self, amount):
