@@ -1,0 +1,2 @@
+terra_sdk
+poetry
