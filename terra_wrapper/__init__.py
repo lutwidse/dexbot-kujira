@@ -1,1 +1,1 @@
-from terra_wrapper.wrapper import TerraWrapper
+from .wrapper import TerraWrapper
