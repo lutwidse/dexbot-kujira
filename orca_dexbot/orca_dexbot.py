@@ -61,7 +61,7 @@ class OrcaDexbot():
     def test_transaction_anchor(self, amount):
         msgs=[MsgExecuteContract(
             sender=self._ACC_ADDRESS,
-            contract=self._contract.ANCHOR_MARKET,
+            contract=self._contract.TESTNET_ANCHOR_MARKET,
             execute_msg={"deposit_stable": {}},
             coins=Coins([Coin('uusd', amount)])
             )]
