@@ -28,13 +28,13 @@ class OrcaDexbot():
         elif network == 'testnet':
             self.terra = LCDClient(BOMBAY[0], BOMBAY[1])
         self.wallet = self.terra.wallet(MnemonicKey(mnemonic=mnemonic))
-        
+
     def usd_to_uusd(self, usd) -> str:
         return str(usd*1000000) + 'uusd'
 
+    def create_transaction(self, msgs) -> BlockTxBroadcastResult:
         tx = self.wallet.create_and_sign_tx(CreateTxOptions(
-            msgs,
-            fee=FEE
+            msgs=msgs,
         ))
         result = self.terra.tx.broadcast(tx)
         return result
@@ -42,10 +42,10 @@ class OrcaDexbot():
     def test_transaction(self, amount):
         from_address = self.wallet.key.acc_address
         to_address = self.wallet.key.acc_address
-
         msgs=[MsgSend(
             from_address=from_address,
             to_address=to_address,
             amount=amount
             )]
+        tx = self.create_transaction(msgs)
         logger.debug(tx)
