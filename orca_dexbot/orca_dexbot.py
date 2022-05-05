@@ -40,6 +40,10 @@ class OrcaDexbot:
     def _usd_to_uusd(self, usd) -> str:
         return str(usd * 1000000)
 
+    def _get_cw_token(self, token_address):
+        query = {"balance": {"address": self._ACC_ADDRESS}}
+        return self._terra.wasm.contract_query(token_address, query)
+
     def _create_transaction(self, msgs) -> BlockTxBroadcastResult:
         tx = self._wallet.create_and_sign_tx(
             CreateTxOptions(
