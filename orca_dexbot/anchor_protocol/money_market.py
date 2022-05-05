@@ -4,10 +4,10 @@ from orca_dexbot import contract
 
 
 class Overseer:
-    def __init__(self, _terra, _contract, _logger):
+    def __init__(self, _logger, _terra, _contract):
+        self._logger: logging = _logger
         self._terra: LCDClient = _terra
         self._contract: contract = _contract
-        self._logger: logging = _logger
 
     def epoch_state(self):
         try:

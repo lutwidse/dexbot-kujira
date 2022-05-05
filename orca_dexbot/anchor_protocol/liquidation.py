@@ -7,10 +7,10 @@ from orca_dexbot import contract
 
 
 class Liquidation:
-    def __init__(self, _terra, _contract, _logger, _wrapper):
+    def __init__(self, _logger, _terra, _contract, _wrapper):
+        self._logger: logging = _logger
         self._terra: LCDClient = _terra
         self._contract: contract = _contract
-        self._logger: logging = _logger
         self._wrapper: TerraWrapper = _wrapper
 
     def submit_bid(self, amount, premium_slot, ltv, cumulative_value):

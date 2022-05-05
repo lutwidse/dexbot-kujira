@@ -9,9 +9,9 @@ from terra_sdk.core.broadcast import (
 
 
 class TerraWrapper:
-    def __init__(self, _wallet, _logger):
-        self._wallet: Wallet = _wallet
+    def __init__(self, _logger, _wallet):
         self._logger: logging = _logger
+        self._wallet: Wallet = _wallet
         pass
 
     def _create_transaction(self, msgs) -> BlockTxBroadcastResult:

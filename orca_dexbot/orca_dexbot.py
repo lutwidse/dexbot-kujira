@@ -41,9 +41,9 @@ class OrcaDexbot:
         self._sequence = self._wallet.sequence()
         self._ACC_ADDRESS = self._wallet.key.acc_address
 
-        self._wrapper = TerraWrapper(self._wallet, logger)
-        self._overseer = Overseer(self._terra, self._contract, logger)
-        self._liquidation = Liquidation(self._terra, self._contract, logger, self._wrapper)
+        self._wrapper = TerraWrapper(logger, self._wallet)
+        self._overseer = Overseer(logger, self._terra, self._contract)
+        self._liquidation = Liquidation(logger, self._terra, self._contract, self._wrapper)
 
     def _usd_uusd_conversion(self, usd, is_usd=True) -> str:
         if is_usd:
