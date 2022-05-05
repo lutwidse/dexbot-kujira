@@ -29,21 +29,20 @@ logger.addHandler(handler)
 
 class OrcaDexbot:
     def __init__(self, network, mnemonic):
-        if network == "mainnet":
+        if network == 'mainnet':
             self._terra = LCDClient(COLUMBUS[0], COLUMBUS[1])
             self._contract = MainnetContract()
-        elif network == "testnet":
+        elif network == 'testnet':
             self._terra = LCDClient(BOMBAY[0], BOMBAY[1])
             self._contract = TestnetContract()
 
         self._wallet = self._terra.wallet(MnemonicKey(mnemonic=mnemonic))
         self._sequence = self._wallet.sequence()
-        self._ACC_ADDRESS = self._wallet.key.acc_address
 
-        self._wrapper = TerraWrapper(logger, self._wallet)
+        self._wrapper = TerraWrapper(logger, self._terra, self._wallet, self._sequence)
         self._overseer = Overseer(logger, self._terra, self._contract)
         self._liquidation = Liquidation(
-            logger, self._terra, self._contract, self._wrapper
+            logger, self._terra, self._wallet, self._contract, self._wrapper
         )
 
     def _usd_uusd_conversion(self, usd, is_usd=True) -> str:
