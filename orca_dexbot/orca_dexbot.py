@@ -40,6 +40,9 @@ class OrcaDexbot():
     def create_transaction(self, msgs) -> BlockTxBroadcastResult:
         tx = self._wallet.create_and_sign_tx(CreateTxOptions(
             msgs=msgs,
+            gas="auto",
+            fee_denoms="uusd",
+            gas_adjustment=2,
             sequence=self._sequence
         ))
         self._sequence = self._sequence + 1
