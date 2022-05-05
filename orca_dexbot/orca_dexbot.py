@@ -1,5 +1,7 @@
 import logging
 
+from .contract import Contract
+
 from terra_sdk.client.lcd import LCDClient
 from terra_sdk.key.mnemonic import MnemonicKey
 
@@ -28,6 +30,8 @@ class OrcaDexbot():
         elif network == 'testnet':
             self.terra = LCDClient(BOMBAY[0], BOMBAY[1])
         self.wallet = self.terra.wallet(MnemonicKey(mnemonic=mnemonic))
+
+        self.contract = Contract()
 
     def usd_to_uusd(self, usd) -> str:
         return str(usd*1000000) + 'uusd'
