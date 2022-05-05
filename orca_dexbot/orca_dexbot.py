@@ -45,11 +45,13 @@ class OrcaDexbot:
             logger, self._terra, self._wallet, self._contract, self._wrapper
         )
 
-    def _usd_uusd_conversion(self, usd, is_usd=True) -> str:
+    def _usd_uusd_conversion(self, usd, is_usd=True, is_str=False) -> any:
         if is_usd:
-            result = str(usd * 1000000)
+            result = usd * 1000000
         else:
-            result = str(usd / 1000000)
+            result = usd / 1000000
+        if is_str:
+            result = str(result) + 'uusd'
         logger.info(result)
         return result
 
