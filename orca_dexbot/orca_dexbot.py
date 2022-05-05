@@ -1,5 +1,4 @@
 import logging
-import base64
 
 from .contract import MainnetContract, TestnetContract
 from .anchor_protocol.money_market import Overseer
@@ -43,7 +42,9 @@ class OrcaDexbot:
 
         self._wrapper = TerraWrapper(logger, self._wallet)
         self._overseer = Overseer(logger, self._terra, self._contract)
-        self._liquidation = Liquidation(logger, self._terra, self._contract, self._wrapper)
+        self._liquidation = Liquidation(
+            logger, self._terra, self._contract, self._wrapper
+        )
 
     def _usd_uusd_conversion(self, usd, is_usd=True) -> str:
         if is_usd:

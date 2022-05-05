@@ -1,5 +1,4 @@
 import logging
-import base64
 
 from terra_sdk.client.lcd import Wallet
 from terra_sdk.client.lcd.api.tx import CreateTxOptions
