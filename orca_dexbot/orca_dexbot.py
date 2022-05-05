@@ -5,8 +5,6 @@ from .contract import Contract
 from terra_sdk.client.lcd import LCDClient
 from terra_sdk.key.mnemonic import MnemonicKey
 
-from terra_sdk.core.fee import Fee
-from terra_sdk.core.bank import MsgSend
 from terra_sdk.client.lcd.api.tx import CreateTxOptions
 from terra_sdk.core.bank import MsgSend
 from terra_sdk.core.wasm.msgs import MsgExecuteContract
@@ -47,8 +45,6 @@ class OrcaDexbot():
         return result
     
     def test_transaction(self, amount):
-        from_address = self.wallet.key.acc_address
-        to_address = self.wallet.key.acc_address
         msgs=[MsgSend(
             from_address=self._ACC_ADDRESS,
             to_address=self._ACC_ADDRESS,
@@ -56,6 +52,13 @@ class OrcaDexbot():
             )]
         tx = self.create_transaction(msgs)
         logger.debug(tx)
+    
+    def test_transaction_anchor(self, amount):
+        msgs=[MsgExecuteContract(
+            sender=self._ACC_ADDRESS,
+            contract=self._contract.ANCHOR_MARKET,
+            execute_msg={"deposit_stable": {}},
+            coins=Coins([Coin('uusd', amount)])
             )]
         tx = self.create_transaction(msgs)
         logger.debug(tx)
