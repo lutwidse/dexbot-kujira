@@ -65,7 +65,7 @@ class OrcaDexbot:
         tx = self.create_transaction(msgs)
         logger.debug(tx)
 
-    def test_transaction_anchor(self, amount):
+    def transaction_anchor(self, amount):
         msgs = [
             MsgExecuteContract(
                 sender=self._ACC_ADDRESS,
