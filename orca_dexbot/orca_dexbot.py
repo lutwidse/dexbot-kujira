@@ -1,4 +1,5 @@
 import logging
+import base64
 
 from .contract import Contract
 
@@ -40,8 +41,8 @@ class OrcaDexbot():
     def create_transaction(self, msgs) -> BlockTxBroadcastResult:
         tx = self._wallet.create_and_sign_tx(CreateTxOptions(
             msgs=msgs,
-            gas="auto",
-            fee_denoms="uusd",
+            gas='auto',
+            fee_denoms='uusd',
             gas_adjustment=2,
             sequence=self._sequence
         ))
@@ -64,6 +65,29 @@ class OrcaDexbot():
             contract=self._contract.TESTNET_ANCHOR_MARKET,
             execute_msg={"deposit_stable": {}},
             coins=Coins([Coin('uusd', amount)])
+            )]
+        tx = self.create_transaction(msgs)
+        logger.debug(tx)
+    
+    def test_transaction_anchor_aust(self, amount, premium_slot, ltv, cumulative_value):
+        msg = str({
+            "submit_bid":{
+                "premium_slot":premium_slot,
+                "collateral_token":self._contract.TESTNET_ANCHOR_BLUNA,
+                "strategy":{"activate_at":{"ltv":ltv,"cumulative_value":cumulative_value},
+                "deactivate_at":{"ltv":ltv,"cumulative_value":cumulative_value}}
+            }}).replace("'", '"')
+        msg = base64.b64encode(msg.encode()).decode('ascii')
+
+        msgs=[MsgExecuteContract(
+            sender=self._ACC_ADDRESS,
+            contract=self._contract.TESTNET_ANCHOR_AUST,
+            execute_msg={
+                "send": {
+                    "msg": msg,
+                    "amount": amount,
+                    "contract": self._contract.TESTNET_KUJIRA_ORCA_AUST
+                }}
             )]
         tx = self.create_transaction(msgs)
         logger.debug(tx)
