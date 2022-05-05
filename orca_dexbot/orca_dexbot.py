@@ -40,8 +40,11 @@ class OrcaDexbot:
         self._sequence = self._wallet.sequence()
         self._ACC_ADDRESS = self._wallet.key.acc_address
 
-    def _usd_to_uusd(self, usd) -> str:
-        result = str(usd * 1000000)
+    def _usd_uusd_conversion(self, usd, is_usd=True) -> str:
+        if is_usd:
+            result = str(usd * 1000000)
+        else:
+            result = str(usd / 1000000)
         logger.info(result)
         return result
 
@@ -86,7 +89,7 @@ class OrcaDexbot:
             MsgSend(
                 from_address=self._ACC_ADDRESS,
                 to_address=self._ACC_ADDRESS,
-                amount=Coin("uusd", self._usd_to_uusd(amount)),
+                amount=Coin("uusd", self._usd_uusd_conversion(amount)),
             )
         ]
         tx = self.create_transaction(msgs)
@@ -98,7 +101,7 @@ class OrcaDexbot:
                 sender=self._ACC_ADDRESS,
                 contract=self._contract.ANCHOR_MARKET,
                 execute_msg={"deposit_stable": {}},
-                coins=Coins([Coin("uusd", self._usd_to_uusd(amount))]),
+                coins=Coins([Coin("uusd", self._usd_uusd_conversion(amount))]),
             )
         ]
         tx = self.create_transaction(msgs)
@@ -133,7 +136,7 @@ class OrcaDexbot:
                 execute_msg={
                     "send": {
                         "msg": msg,
-                        "amount": self._usd_to_uusd(amount),
+                        "amount": self._usd_uusd_conversion(amount),
                         "contract": self._contract.KUJIRA_ORCA_AUST,
                     }
                 },
