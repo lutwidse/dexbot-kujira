@@ -47,6 +47,5 @@ class OrcaDexbot():
             from_address=from_address,
             to_address=to_address,
             amount=amount
-            )],
-        tx = self.create_signed_tx(msgs)
+            )]
         logger.debug(tx)
