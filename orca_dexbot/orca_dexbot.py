@@ -58,7 +58,7 @@ class OrcaDexbot:
             MsgSend(
                 from_address=self._ACC_ADDRESS,
                 to_address=self._ACC_ADDRESS,
-                amount=Coin("uusd", amount),
+                amount=Coin("uusd", self._usd_to_uusd(amount)),
             )
         ]
         tx = self.create_transaction(msgs)
@@ -70,7 +70,7 @@ class OrcaDexbot:
                 sender=self._ACC_ADDRESS,
                 contract=self._contract.TESTNET_ANCHOR_MARKET,
                 execute_msg={"deposit_stable": {}},
-                coins=Coins([Coin("uusd", amount)]),
+                coins=Coins([Coin("uusd", self._usd_to_uusd(amount))]),
             )
         ]
         tx = self.create_transaction(msgs)
@@ -104,7 +104,7 @@ class OrcaDexbot:
                 execute_msg={
                     "send": {
                         "msg": msg,
-                        "amount": amount,
+                        "amount": self._usd_to_uusd(amount),
                         "contract": self._contract.TESTNET_KUJIRA_ORCA_AUST,
                     }
                 },
