@@ -1,4 +1,4 @@
-import os
+import logging
 
 from terra_sdk.client.lcd import LCDClient
 from terra_sdk.key.mnemonic import MnemonicKey
@@ -15,6 +15,9 @@ COLUMBUS = ["https://lcd.terra.dev", "columbus-5"]
 BOMBAY = ["https://bombay-lcd.terra.dev/", "bombay-12"]
 
 FEE = Fee(200000, "10000000uusd") # 0.1UST
+
+logger = logging.getLogger(__name__)
+logger.setLevel(level=INFO)
 class OrcaDexbot():
     def __init__(self, network, mnemonic):
         if network == "mainnet":
@@ -22,7 +25,7 @@ class OrcaDexbot():
         elif network == "testnet":
             self.terra = LCDClient(BOMBAY[0], BOMBAY[1])
         self.wallet = self.terra.wallet(MnemonicKey(mnemonic=mnemonic))
-
+        
     def create_signed_tx(self, msgs) -> BlockTxBroadcastResult:
         tx = self.wallet.create_and_sign_tx(CreateTxOptions(
             msgs,
@@ -40,4 +43,5 @@ class OrcaDexbot():
             to_address=to_address,
             amount=amount
             )],
-        self.create_signed_tx(msgs)
+        tx = self.create_signed_tx(msgs)
+        logger.debug(tx)
