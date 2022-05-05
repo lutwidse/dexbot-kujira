@@ -11,18 +11,21 @@ from terra_sdk.core.broadcast import (
     BlockTxBroadcastResult,
 )
 
-COLUMBUS = ["https://lcd.terra.dev", "columbus-5"]
-BOMBAY = ["https://bombay-lcd.terra.dev/", "bombay-12"]
-
-FEE = Fee(200000, "10000000uusd") # 0.1UST
+COLUMBUS = ['https://lcd.terra.dev', 'columbus-5']
+BOMBAY = ['https://bombay-lcd.terra.dev/', 'bombay-12']
 
 logger = logging.getLogger(__name__)
-logger.setLevel(level=INFO)
+logger.setLevel(level=logging.DEBUG)
+handler = logging.FileHandler('debug.log')
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
 class OrcaDexbot():
     def __init__(self, network, mnemonic):
-        if network == "mainnet":
+        if network == 'mainnet':
             self.terra = LCDClient(COLUMBUS[0], COLUMBUS[1])
-        elif network == "testnet":
+        elif network == 'testnet':
             self.terra = LCDClient(BOMBAY[0], BOMBAY[1])
         self.wallet = self.terra.wallet(MnemonicKey(mnemonic=mnemonic))
         
