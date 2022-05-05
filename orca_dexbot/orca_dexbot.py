@@ -1,7 +1,7 @@
 import logging
 import base64
 
-from .contract import Contract
+from .contract import MainnetContract, TestnetContract
 
 from terra_sdk.client.lcd import LCDClient
 from terra_sdk.key.mnemonic import MnemonicKey
@@ -29,12 +29,13 @@ class OrcaDexbot:
     def __init__(self, network, mnemonic):
         if network == "mainnet":
             self._terra = LCDClient(COLUMBUS[0], COLUMBUS[1])
+            self._contract = MainnetContract()
         elif network == "testnet":
             self._terra = LCDClient(BOMBAY[0], BOMBAY[1])
+            self._contract = TestnetContract()
         self._wallet = self._terra.wallet(MnemonicKey(mnemonic=mnemonic))
         self._sequence = self._wallet.sequence()
         self._ACC_ADDRESS = self._wallet.key.acc_address
-        self._contract = Contract()
 
     def _usd_to_uusd(self, usd) -> str:
         return str(usd * 1000000)
@@ -68,7 +69,7 @@ class OrcaDexbot:
         msgs = [
             MsgExecuteContract(
                 sender=self._ACC_ADDRESS,
-                contract=self._contract.TESTNET_ANCHOR_MARKET,
+                contract=self._contract.ANCHOR_MARKET,
                 execute_msg={"deposit_stable": {}},
                 coins=Coins([Coin("uusd", self._usd_to_uusd(amount))]),
             )
@@ -81,7 +82,7 @@ class OrcaDexbot:
             {
                 "submit_bid": {
                     "premium_slot": premium_slot,
-                    "collateral_token": self._contract.TESTNET_ANCHOR_BLUNA,
+                    "collateral_token": self._contract.ANCHOR_BLUNA,
                     "strategy": {
                         "activate_at": {
                             "ltv": ltv,
@@ -100,12 +101,12 @@ class OrcaDexbot:
         msgs = [
             MsgExecuteContract(
                 sender=self._ACC_ADDRESS,
-                contract=self._contract.TESTNET_ANCHOR_AUST,
+                contract=self._contract.ANCHOR_AUST,
                 execute_msg={
                     "send": {
                         "msg": msg,
                         "amount": self._usd_to_uusd(amount),
-                        "contract": self._contract.TESTNET_KUJIRA_ORCA_AUST,
+                        "contract": self._contract.KUJIRA_ORCA_AUST,
                     }
                 },
             )
