@@ -38,13 +38,21 @@ class OrcaDexbot:
         self._ACC_ADDRESS = self._wallet.key.acc_address
 
     def _usd_to_uusd(self, usd) -> str:
-        return str(usd * 1000000)
+        result = str(usd * 1000000)
+        logger.info(result)
+        return result
 
-    def _get_cw_token(self, token_address):
+    def _get_cw_token(self, token_address) -> dict:
+        try:
         query = {"balance": {"address": self._ACC_ADDRESS}}
-        return self._terra.wasm.contract_query(token_address, query)
+            result = self._terra.wasm.contract_query(token_address, query)
+            logger.info(result)
+            return result
+        except:
+            logger.debug(stack_info=True)
 
     def _create_transaction(self, msgs) -> BlockTxBroadcastResult:
+        try:
         tx = self._wallet.create_and_sign_tx(
             CreateTxOptions(
                 msgs=msgs,
@@ -57,6 +65,8 @@ class OrcaDexbot:
         self._sequence = self._sequence + 1
         result = self._terra.tx.broadcast(tx)
         return result
+        except:
+            logger.debug(stack_info=True)
 
     def test_transaction(self, amount):
         msgs = [
@@ -79,7 +89,7 @@ class OrcaDexbot:
             )
         ]
         tx = self.create_transaction(msgs)
-        logger.debug(tx)
+        logger.info(tx)
 
     def transaction_anchor_aust(self, amount, premium_slot, ltv, cumulative_value):
         # TODO:UST to aUST conversion
@@ -117,4 +127,4 @@ class OrcaDexbot:
             )
         ]
         tx = self.create_transaction(msgs)
-        logger.debug(tx)
+        logger.info(tx)
