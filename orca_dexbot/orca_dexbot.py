@@ -29,7 +29,9 @@ class OrcaDexbot():
             self.terra = LCDClient(BOMBAY[0], BOMBAY[1])
         self.wallet = self.terra.wallet(MnemonicKey(mnemonic=mnemonic))
         
-    def create_signed_tx(self, msgs) -> BlockTxBroadcastResult:
+    def usd_to_uusd(self, usd) -> str:
+        return str(usd*1000000) + 'uusd'
+
         tx = self.wallet.create_and_sign_tx(CreateTxOptions(
             msgs,
             fee=FEE
