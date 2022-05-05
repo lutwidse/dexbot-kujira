@@ -3,6 +3,8 @@ import base64
 
 from .contract import MainnetContract, TestnetContract
 from .anchor_protocol.money_market import Overseer
+from .anchor_protocol.liquidation import Liquidation
+from ..terra_wrapper.wrapper import TerraWrapper
 
 from terra_sdk.client.lcd import LCDClient
 from terra_sdk.key.mnemonic import MnemonicKey
@@ -31,14 +33,17 @@ class OrcaDexbot:
         if network == "mainnet":
             self._terra = LCDClient(COLUMBUS[0], COLUMBUS[1])
             self._contract = MainnetContract()
-            self._overseer = Overseer(self._terra, self._contract, logger)
         elif network == "testnet":
             self._terra = LCDClient(BOMBAY[0], BOMBAY[1])
             self._contract = TestnetContract()
-            self._overseer = Overseer(self._terra, self._contract, logger)
+
         self._wallet = self._terra.wallet(MnemonicKey(mnemonic=mnemonic))
         self._sequence = self._wallet.sequence()
         self._ACC_ADDRESS = self._wallet.key.acc_address
+
+        self._wrapper = TerraWrapper(self._wallet, logger)
+        self._overseer = Overseer(self._terra, self._contract, logger)
+        self._liquidation = Liquidation(self._terra, self._contract, logger, self._wrapper)
 
     def _usd_uusd_conversion(self, usd, is_usd=True) -> str:
         if is_usd:
@@ -108,39 +113,4 @@ class OrcaDexbot:
         logger.info(tx)
 
     def transaction_anchor_aust(self, amount, premium_slot, ltv, cumulative_value):
-        # TODO:UST to aUST conversion
-        msg = str(
-            {
-                "submit_bid": {
-                    "premium_slot": premium_slot,
-                    "collateral_token": self._contract.ANCHOR_BLUNA,
-                    "strategy": {
-                        "activate_at": {
-                            "ltv": ltv,
-                            "cumulative_value": cumulative_value,
-                        },
-                        "deactivate_at": {
-                            "ltv": ltv,
-                            "cumulative_value": cumulative_value,
-                        },
-                    },
-                }
-            }
-        ).replace("'", '"')
-        msg = base64.b64encode(msg.encode()).decode("ascii")
-
-        msgs = [
-            MsgExecuteContract(
-                sender=self._ACC_ADDRESS,
-                contract=self._contract.ANCHOR_AUST,
-                execute_msg={
-                    "send": {
-                        "msg": msg,
-                        "amount": self._usd_uusd_conversion(amount),
-                        "contract": self._contract.KUJIRA_ORCA_AUST,
-                    }
-                },
-            )
-        ]
-        tx = self.create_transaction(msgs)
-        logger.info(tx)
+        self._liquidation.submit_bid(amount, premium_slot, ltv, cumulative_value)
