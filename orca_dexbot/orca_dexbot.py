@@ -37,7 +37,7 @@ class OrcaDexbot():
         self._contract = Contract()
 
     def usd_to_uusd(self, usd) -> str:
-        return str(usd*1000000) + 'uusd'
+        return str(usd*1000000)
 
     def create_transaction(self, msgs) -> BlockTxBroadcastResult:
         tx = self.wallet.create_and_sign_tx(CreateTxOptions(
@@ -50,9 +50,12 @@ class OrcaDexbot():
         from_address = self.wallet.key.acc_address
         to_address = self.wallet.key.acc_address
         msgs=[MsgSend(
-            from_address=from_address,
-            to_address=to_address,
-            amount=amount
+            from_address=self._ACC_ADDRESS,
+            to_address=self._ACC_ADDRESS,
+            amount=Coin('uusd', amount)
+            )]
+        tx = self.create_transaction(msgs)
+        logger.debug(tx)
             )]
         tx = self.create_transaction(msgs)
         logger.debug(tx)
