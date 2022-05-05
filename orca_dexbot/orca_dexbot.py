@@ -2,6 +2,7 @@ import logging
 import base64
 
 from .contract import MainnetContract, TestnetContract
+from .anchor_protocol.money_market import Overseer
 
 from terra_sdk.client.lcd import LCDClient
 from terra_sdk.key.mnemonic import MnemonicKey
@@ -30,9 +31,11 @@ class OrcaDexbot:
         if network == "mainnet":
             self._terra = LCDClient(COLUMBUS[0], COLUMBUS[1])
             self._contract = MainnetContract()
+            self._overseer = Overseer(self._terra, self._contract, logger)
         elif network == "testnet":
             self._terra = LCDClient(BOMBAY[0], BOMBAY[1])
             self._contract = TestnetContract()
+            self._overseer = Overseer(self._terra, self._contract, logger)
         self._wallet = self._terra.wallet(MnemonicKey(mnemonic=mnemonic))
         self._sequence = self._wallet.sequence()
         self._ACC_ADDRESS = self._wallet.key.acc_address
