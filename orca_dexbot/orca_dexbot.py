@@ -36,7 +36,7 @@ class OrcaDexbot:
         self._ACC_ADDRESS = self._wallet.key.acc_address
         self._contract = Contract()
 
-    def usd_to_uusd(self, usd) -> str:
+    def _usd_to_uusd(self, usd) -> str:
         return str(usd * 1000000)
 
     def create_transaction(self, msgs) -> BlockTxBroadcastResult:
