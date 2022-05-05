@@ -8,7 +8,9 @@ from terra_sdk.key.mnemonic import MnemonicKey
 from terra_sdk.core.fee import Fee
 from terra_sdk.core.bank import MsgSend
 from terra_sdk.client.lcd.api.tx import CreateTxOptions
-
+from terra_sdk.core.bank import MsgSend
+from terra_sdk.core.wasm.msgs import MsgExecuteContract
+from terra_sdk.core import Coins, Coin
 from terra_sdk.core.broadcast import (
     BlockTxBroadcastResult,
 )
@@ -31,7 +33,8 @@ class OrcaDexbot():
             self.terra = LCDClient(BOMBAY[0], BOMBAY[1])
         self.wallet = self.terra.wallet(MnemonicKey(mnemonic=mnemonic))
 
-        self.contract = Contract()
+        self._ACC_ADDRESS = self.wallet.key.acc_address
+        self._contract = Contract()
 
     def usd_to_uusd(self, usd) -> str:
         return str(usd*1000000) + 'uusd'
