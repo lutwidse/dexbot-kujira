@@ -42,9 +42,17 @@ class OrcaDexbot:
         logger.info(result)
         return result
 
+    def _get_native_token(self, wallet_address) -> dict:
+        try:
+            result = self._terra.bank.balance(wallet_address)
+            logger.info(result)
+            return result
+        except:
+            logger.debug(stack_info=True)
+
     def _get_cw_token(self, token_address) -> dict:
         try:
-        query = {"balance": {"address": self._ACC_ADDRESS}}
+            query = {"balance": {"address": self._ACC_ADDRESS}}
             result = self._terra.wasm.contract_query(token_address, query)
             logger.info(result)
             return result
@@ -55,18 +63,18 @@ class OrcaDexbot:
         try:
             logger.info(msgs)
 
-        tx = self._wallet.create_and_sign_tx(
-            CreateTxOptions(
-                msgs=msgs,
-                gas="auto",
-                fee_denoms="uusd",
-                gas_adjustment=2,
-                sequence=self._sequence,
+            tx = self._wallet.create_and_sign_tx(
+                CreateTxOptions(
+                    msgs=msgs,
+                    gas="auto",
+                    fee_denoms="uusd",
+                    gas_adjustment=2,
+                    sequence=self._sequence,
+                )
             )
-        )
-        self._sequence = self._sequence + 1
-        result = self._terra.tx.broadcast(tx)
-        return result
+            self._sequence = self._sequence + 1
+            result = self._terra.tx.broadcast(tx)
+            return result
         except:
             logger.debug("[_create_transaction]", stack_info=True)
 
