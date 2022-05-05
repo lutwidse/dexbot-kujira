@@ -49,10 +49,12 @@ class OrcaDexbot:
             logger.info(result)
             return result
         except:
-            logger.debug(stack_info=True)
+            logger.debug("[_get_cw_token]", stack_info=True)
 
     def _create_transaction(self, msgs) -> BlockTxBroadcastResult:
         try:
+            logger.info(msgs)
+
         tx = self._wallet.create_and_sign_tx(
             CreateTxOptions(
                 msgs=msgs,
@@ -66,7 +68,7 @@ class OrcaDexbot:
         result = self._terra.tx.broadcast(tx)
         return result
         except:
-            logger.debug(stack_info=True)
+            logger.debug("[_create_transaction]", stack_info=True)
 
     def test_transaction(self, amount):
         msgs = [
