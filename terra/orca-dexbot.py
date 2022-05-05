@@ -1,3 +1,5 @@
+import os
+
 from terra_sdk.client.lcd import LCDClient
 from terra_sdk.key.mnemonic import MnemonicKey
 
@@ -5,27 +7,37 @@ from terra_sdk.core.fee import Fee
 from terra_sdk.core.bank import MsgSend
 from terra_sdk.client.lcd.api.tx import CreateTxOptions
 
-import os
+from terra_sdk.core.broadcast import (
+    BlockTxBroadcastResult,
+)
 
 COLUMBUS = ["https://lcd.terra.dev", "columbus-5"]
 BOMBAY = ["https://bombay-lcd.terra.dev/", "bombay-12"]
 
-mk = MnemonicKey(mnemonic=os.environ["TESTNET_MNEMONIC"])
-terra = LCDClient(BOMBAY[0], BOMBAY[1])
-wallet = terra.wallet(mk)
+FEE = Fee(200000, "10000000uusd") # 0.1UST
+class OrcaDexbot():
+    def __init__(self, network, mnemonic):
+        if network == "mainnet":
+            self.terra = LCDClient(COLUMBUS[0], COLUMBUS[1])
+        elif network == "testnet":
+            self.terra = LCDClient(BOMBAY[0], BOMBAY[1])
+        self.wallet = self.terra.wallet(MnemonicKey(mnemonic=mnemonic))
 
-from_address = wallet.key.acc_address
-to_address = wallet.key.acc_address
+    def create_signed_tx(self, msgs) -> BlockTxBroadcastResult:
+        tx = self.wallet.create_and_sign_tx(CreateTxOptions(
+            msgs,
+            fee=FEE
+        ))
+        result = self.terra.tx.broadcast(tx)
+        return result
+    
+    def test_transaction(self, amount):
+        from_address = self.wallet.key.acc_address
+        to_address = self.wallet.key.acc_address
 
-tx = wallet.create_and_sign_tx(CreateTxOptions(
-    msgs=[MsgSend(
-        from_address=from_address,
-        to_address=to_address,
-        amount="1000000uusd"
-    )],
-    memo="test transaction!",
-    fee=Fee(200000, "1000000uusd")
-))
-
-result = terra.tx.broadcast(tx)
-print(result)
+        msgs=[MsgSend(
+            from_address=from_address,
+            to_address=to_address,
+            amount=amount
+            )],
+        self.create_signed_tx(msgs)
