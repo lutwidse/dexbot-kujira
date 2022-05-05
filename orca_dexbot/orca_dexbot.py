@@ -30,7 +30,7 @@ class OrcaDexbot():
         elif network == 'testnet':
             self._terra = LCDClient(BOMBAY[0], BOMBAY[1])
         self._wallet = self._terra.wallet(MnemonicKey(mnemonic=mnemonic))
-
+        self._sequence = self._wallet.sequence()
         self._ACC_ADDRESS = self._wallet.key.acc_address
         self._contract = Contract()
 
@@ -40,7 +40,9 @@ class OrcaDexbot():
     def create_transaction(self, msgs) -> BlockTxBroadcastResult:
         tx = self._wallet.create_and_sign_tx(CreateTxOptions(
             msgs=msgs,
+            sequence=self._sequence
         ))
+        self._sequence = self._sequence + 1
         result = self._terra.tx.broadcast(tx)
         return result
     
