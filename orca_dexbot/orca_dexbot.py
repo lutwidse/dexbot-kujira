@@ -39,7 +39,7 @@ class OrcaDexbot:
     def _usd_to_uusd(self, usd) -> str:
         return str(usd * 1000000)
 
-    def create_transaction(self, msgs) -> BlockTxBroadcastResult:
+    def _create_transaction(self, msgs) -> BlockTxBroadcastResult:
         tx = self._wallet.create_and_sign_tx(
             CreateTxOptions(
                 msgs=msgs,
