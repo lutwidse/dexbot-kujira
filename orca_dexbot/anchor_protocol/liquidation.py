@@ -1,5 +1,7 @@
 import base64
 import logging
+
+from terra_sdk.client.lcd import Wallet
 from terra_sdk.client.lcd import LCDClient
 from terra_sdk.core.wasm.msgs import MsgExecuteContract
 from terra_wrapper.wrapper import TerraWrapper
@@ -7,9 +9,10 @@ from orca_dexbot import contract
 
 
 class Liquidation:
-    def __init__(self, _logger, _terra, _contract, _wrapper):
+    def __init__(self, _logger, _terra, _wallet, _contract, _wrapper):
         self._logger: logging = _logger
         self._terra: LCDClient = _terra
+        self._wallet: Wallet = _wallet
         self._contract: contract = _contract
         self._wrapper: TerraWrapper = _wrapper
 
@@ -37,12 +40,12 @@ class Liquidation:
 
         msgs = [
             MsgExecuteContract(
-                sender=self._ACC_ADDRESS,
+                sender=self._wallet.key.acc_address,
                 contract=self._contract.ANCHOR_AUST,
                 execute_msg={
                     "send": {
                         "msg": msg,
-                        "amount": self._usd_uusd_conversion(amount),
+                        "amount": amount,
                         "contract": self._contract.KUJIRA_ORCA_AUST,
                     }
                 },

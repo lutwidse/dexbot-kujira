@@ -18,4 +18,4 @@ class Overseer:
             self._logger.info(result)
             return result
         except:
-            self._logger.debug("[_get_cw_token]", stack_info=True)
+            self._logger.debug("[_get_cw_token]", exc_info=True, stack_info=True)

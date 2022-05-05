@@ -3,7 +3,7 @@ import logging
 from .contract import MainnetContract, TestnetContract
 from .anchor_protocol.money_market import Overseer
 from .anchor_protocol.liquidation import Liquidation
-from ..terra_wrapper.wrapper import TerraWrapper
+from terra_wrapper.wrapper import TerraWrapper
 
 from terra_sdk.client.lcd import LCDClient
 from terra_sdk.key.mnemonic import MnemonicKey
@@ -61,16 +61,16 @@ class OrcaDexbot:
             logger.info(result)
             return result
         except:
-            logger.debug(stack_info=True)
+            logger.debug('[_get_native_token]', exc_info=True, stack_info=True)
 
     def _get_cw_token(self, token_address) -> dict:
         try:
-            query = {"balance": {"address": self._ACC_ADDRESS}}
+            query = {"balance": {"address": self._wallet.key.acc_address}}
             result = self._terra.wasm.contract_query(token_address, query)
             logger.info(result)
             return result
         except:
-            logger.debug("[_get_cw_token]", stack_info=True)
+            logger.debug('[_get_cw_token]', exc_info=True, stack_info=True)
 
     def _create_transaction(self, msgs) -> BlockTxBroadcastResult:
         try:
@@ -89,30 +89,30 @@ class OrcaDexbot:
             result = self._terra.tx.broadcast(tx)
             return result
         except:
-            logger.debug("[_create_transaction]", stack_info=True)
+            logger.debug('[_create_transaction]', stack_info=True)
 
     def test_transaction(self, amount):
         msgs = [
             MsgSend(
-                from_address=self._ACC_ADDRESS,
-                to_address=self._ACC_ADDRESS,
-                amount=Coin("uusd", self._usd_uusd_conversion(amount)),
+                from_address=self._wallet.key.acc_address,
+                to_address=self._wallet.key.acc_address,
+                amount=Coins([Coin("uusd", self._usd_uusd_conversion(amount))]),
             )
         ]
-        tx = self.create_transaction(msgs)
+        tx = self._wrapper._create_transaction(msgs)
         logger.debug(tx)
 
     def transaction_anchor(self, amount):
         msgs = [
             MsgExecuteContract(
-                sender=self._ACC_ADDRESS,
+                sender=self._wallet.key.acc_address,
                 contract=self._contract.ANCHOR_MARKET,
                 execute_msg={"deposit_stable": {}},
                 coins=Coins([Coin("uusd", self._usd_uusd_conversion(amount))]),
             )
         ]
-        tx = self.create_transaction(msgs)
+        tx = self._wrapper._create_transaction(msgs)
         logger.info(tx)
 
     def transaction_anchor_aust(self, amount, premium_slot, ltv, cumulative_value):
-        self._liquidation.submit_bid(amount, premium_slot, ltv, cumulative_value)
+        self._liquidation.submit_bid(self._usd_uusd_conversion(amount), premium_slot, ltv, cumulative_value)
