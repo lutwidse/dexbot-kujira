@@ -80,9 +80,15 @@ class OrcaDexbot(Anchor, Astroport):
         except:
             self._logger.debug("[get_cw_token]", exc_info=True, stack_info=True)
 
+    def get_wallet_address(self) -> str:
+        return self._wallet.key.acc_address
+
     def get_bluna_contract(self) -> str:
         return self._contract.ANCHOR_BLUNA
-        
+    
+    def get_aust_contract(self) -> str:
+        return self._contract.ANCHOR_AUST
+
     def transaction_test(self, amount):
         msgs = [
             MsgSend(
