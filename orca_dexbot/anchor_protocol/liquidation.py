@@ -52,4 +52,10 @@ class Liquidation:
             )
         ]
         tx = self._wrapper._create_transaction(msgs)
-        self._logger.info("[submit_bid]", tx)
+            self._logger.debug("[submit_bid]", tx)
+            self._logger.debug("[submit_bid]", exc_info=True, stack_info=True)
+
+            self._logger.debug(f"[bids_by_user] : {query}")
+
+            self._logger.debug(f"[bids_by_user] : {result}")
+            self._logger.debug("[bids_by_user]", exc_info=True, stack_info=True)

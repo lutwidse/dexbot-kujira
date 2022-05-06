@@ -48,30 +48,29 @@ class OrcaDexbot:
         if is_str:
             result = str(result)
         if is_need_prefix:
-            result = result + 'uusd'
-        logger.info('[_usd_uusd_conversion]', result)
+        logger.info(f"[_usd_uusd_conversion] : {result}")
         return result
 
     def _get_native_token(self, wallet_address) -> dict:
         try:
             result = self._terra.bank.balance(wallet_address)
-            logger.info('[_get_native_token]', result)
+            logger.info(f"[_get_native_token] : {result}")
             return result
         except:
-            logger.debug('[_get_native_token]', exc_info=True, stack_info=True)
+            logger.debug("[_get_native_token]", exc_info=True, stack_info=True)
 
     def _get_cw_token(self, token_address) -> dict:
         try:
             query = {"balance": {"address": self._wallet.key.acc_address}}
             result = self._terra.wasm.contract_query(token_address, query)
-            logger.info('[_get_cw_token]', result)
+            logger.info(f"[_get_cw_token] : {result}")
             return result
         except:
-            logger.debug('[_get_cw_token]', exc_info=True, stack_info=True)
+            logger.debug("[_get_cw_token]", exc_info=True, stack_info=True)
 
     def _create_transaction(self, msgs) -> BlockTxBroadcastResult:
         try:
-            logger.info('[_create_transaction]', msgs)
+            logger.info("[_create_transaction]", msgs)
 
             tx = self._wallet.create_and_sign_tx(
                 CreateTxOptions(
@@ -86,7 +85,7 @@ class OrcaDexbot:
             result = self._terra.tx.broadcast(tx)
             return result
         except:
-            logger.debug('[_create_transaction]', stack_info=True)
+            logger.debug("[_create_transaction]", stack_info=True)
 
     def test_transaction(self, amount):
         msgs = [
@@ -97,7 +96,7 @@ class OrcaDexbot:
             )
         ]
         tx = self._wrapper._create_transaction(msgs)
-        logger.debug('[test_transaction]', tx)
+        logger.debug(f"[test_transaction] : {tx}")
 
     def transaction_anchor(self, amount):
         self._anchor._market.deposit_stable(self._usd_uusd_conversion(amount))
