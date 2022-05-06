@@ -1,8 +1,5 @@
 import logging
 
-import base64
-from terra_sdk.core.wasm.msgs import MsgExecuteContract
-
 from .contract import MainnetContract, TestnetContract
 from .anchor_protocol.anchor import Anchor
 from terra_wrapper.wrapper import TerraWrapper
@@ -33,6 +30,7 @@ class OrcaDexbot(Anchor):
         handler.setFormatter(formatter)
         self._logger.addHandler(handler)
 
+        # We should not change the contract.py to be inheritable to prevent human error. You will potentially lose funds if there's no double-check.
         if network == "mainnet":
             self._terra = LCDClient(COLUMBUS[0], COLUMBUS[1])
             self._contract = MainnetContract()
@@ -40,13 +38,11 @@ class OrcaDexbot(Anchor):
             self._terra = LCDClient(BOMBAY[0], BOMBAY[1])
             self._contract = TestnetContract()
 
+        # TODO: Save mnemonic securely on local with bcrypt
         self._wallet = self._terra.wallet(MnemonicKey(mnemonic=mnemonic))
         self._sequence = self._wallet.sequence()
 
         self._wrapper = TerraWrapper(self._logger, self._terra, self._wallet, self._sequence)
-        self._anchor = Anchor(
-            self._logger, self._terra, self._wallet, self._sequence, self._wrapper
-        )
 
     def usd_uusd_conversion(
         self, usd, is_usd=True, is_str=False, is_need_prefix=False
@@ -121,4 +117,4 @@ class OrcaDexbot(Anchor):
         self.submit_bid(amount, premium_slot, collateral_token, ltv, cumulative_value)
 
     def transaction_kujira_claim_bids(self, collateral_token, bids):
-        self._anchor._liquidation.claim_liquidations(collateral_token, bids)
+        self.claim_liquidations(collateral_token, bids)
