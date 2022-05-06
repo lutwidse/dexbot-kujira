@@ -6,6 +6,7 @@ from terra_sdk.client.lcd.api.tx import CreateTxOptions
 from terra_sdk.core.broadcast import (
     BlockTxBroadcastResult,
 )
+from terra_sdk.core.wasm.msgs import MsgExecuteContract
 
 
 class TerraWrapper:
@@ -16,6 +17,7 @@ class TerraWrapper:
         self._sequence: int = _sequence
         pass
 
+    # TODO: Add error handling
     def _create_transaction(self, msgs) -> BlockTxBroadcastResult:
         try:
             self._logger.debug(msgs)
@@ -34,3 +36,10 @@ class TerraWrapper:
             return result
         except:
             self._logger.debug("[_create_transaction]", exc_info=True, stack_info=True)
+
+    def _create_msg_execute_contract(self, contract, execute_msg) -> MsgExecuteContract:
+        return MsgExecuteContract(
+            sender=self._wallet.key.acc_address,
+            contract=contract,
+            execute_msg=execute_msg,
+        )
