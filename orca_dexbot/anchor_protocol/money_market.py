@@ -1,8 +1,11 @@
 import logging
+
 from terra_sdk.client.lcd import LCDClient
+from terra_sdk.client.lcd import Wallet
+from terra_sdk.core import Coins, Coin
+from terra_sdk.core.wasm.msgs import MsgExecuteContract
 from orca_dexbot import contract
-
-
+    
 class Overseer:
     def __init__(self, _logger, _terra, _contract):
         self._logger: logging = _logger
@@ -37,3 +40,4 @@ class Market:
             )
         ]
         tx = self._wrapper._create_transaction(msgs)
+        self._logger.info("[transaction_anchor]", tx)

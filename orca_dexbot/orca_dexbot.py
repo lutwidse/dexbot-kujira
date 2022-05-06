@@ -1,8 +1,7 @@
 import logging
 
 from .contract import MainnetContract, TestnetContract
-from .anchor_protocol.money_market import Overseer
-from .anchor_protocol.liquidation import Liquidation
+from .anchor_protocol.anchor import Anchor
 from terra_wrapper.wrapper import TerraWrapper
 
 from terra_sdk.client.lcd import LCDClient
@@ -10,7 +9,6 @@ from terra_sdk.key.mnemonic import MnemonicKey
 
 from terra_sdk.client.lcd.api.tx import CreateTxOptions
 from terra_sdk.core.bank import MsgSend
-from terra_sdk.core.wasm.msgs import MsgExecuteContract
 from terra_sdk.core import Coins, Coin
 from terra_sdk.core.broadcast import (
     BlockTxBroadcastResult,
@@ -40,10 +38,7 @@ class OrcaDexbot:
         self._sequence = self._wallet.sequence()
 
         self._wrapper = TerraWrapper(logger, self._terra, self._wallet, self._sequence)
-        self._overseer = Overseer(logger, self._terra, self._contract)
-        self._liquidation = Liquidation(
-            logger, self._terra, self._wallet, self._contract, self._wrapper
-        )
+        self._anchor = Anchor(logger, self._terra, self._wallet, self._contract, self._wrapper)
 
     def _usd_uusd_conversion(self, usd, is_usd=True, is_str=False, is_need_prefix=False) -> any:
         if is_usd:
@@ -105,17 +100,8 @@ class OrcaDexbot:
         logger.debug('[test_transaction]', tx)
 
     def transaction_anchor(self, amount):
-        msgs = [
-            MsgExecuteContract(
-                sender=self._wallet.key.acc_address,
-                contract=self._contract.ANCHOR_MARKET,
-                execute_msg={"deposit_stable": {}},
-                coins=Coins([Coin("uusd", self._usd_uusd_conversion(amount))]),
-            )
-        ]
-        tx = self._wrapper._create_transaction(msgs)
-        logger.info('[transaction_anchor]', tx)
+        self._anchor._market.deposit_stable(self._usd_uusd_conversion(amount))
 
     def transaction_anchor_aust(self, amount, premium_slot, ltv, cumulative_value):
         cumulative_value *= 1000000
-        self._liquidation.submit_bid(self._usd_uusd_conversion(amount, is_str=True), premium_slot, ltv, self._usd_uusd_conversion(cumulative_value, is_str=True))
+        self._anchor._liquidation.submit_bid(self._usd_uusd_conversion(amount, is_str=True), premium_slot, ltv, self._usd_uusd_conversion(cumulative_value, is_str=True))
