@@ -3,13 +3,11 @@ import logging
 
 from terra_sdk.client.lcd import Wallet
 from terra_sdk.client.lcd import LCDClient
-from terra_sdk.core.wasm.msgs import MsgExecuteContract
-from terra_sdk.core import Coins, Coin
 from terra_wrapper.wrapper import TerraWrapper
 from orca_dexbot import contract
 
 
-class Liquidation:
+class Liquidation(object):
     def __init__(self, _logger, _terra, _wallet, _contract, _wrapper):
         self._logger: logging = _logger
         self._terra: LCDClient = _terra

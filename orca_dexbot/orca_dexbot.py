@@ -109,14 +109,12 @@ class OrcaDexbot:
         logger.debug(f"[transaction_test] : {tx}")
 
     def transaction_anchor_deposit(self, amount):
-        self._anchor._market.deposit_stable(amount)
+        self.deposit_stable(amount)
 
     def transaction_kujira_bid(
         self, amount, premium_slot, collateral_token, ltv, cumulative_value
     ):
-        self._anchor._liquidation.submit_bid(
-            amount, premium_slot, collateral_token, ltv, cumulative_value
-        )
+        self.submit_bid(amount, premium_slot, collateral_token, ltv, cumulative_value)
 
     def transaction_kujira_claim_bids(self, collateral_token, bids):
         self._anchor._liquidation.claim_liquidations(collateral_token, bids)

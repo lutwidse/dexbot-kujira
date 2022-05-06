@@ -7,7 +7,7 @@ from orca_dexbot import contract
 from terra_wrapper.wrapper import TerraWrapper
 
 
-class Overseer:
+class Overseer(object):
     def __init__(self, _logger, _terra, _contract):
         self._logger: logging = _logger
         self._terra: LCDClient = _terra
@@ -25,7 +25,7 @@ class Overseer:
             self._logger.debug("[_get_cw_token]", exc_info=True, stack_info=True)
 
 
-class Market:
+class Market(object):
     def __init__(self, _logger, _wallet, _contract, _wrapper):
         self._logger: logging = _logger
         self._wallet: Wallet = _wallet

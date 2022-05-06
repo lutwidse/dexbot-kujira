@@ -2,8 +2,7 @@ from .money_market import Overseer, Market
 from .liquidation import Liquidation
 
 
-class Anchor:
+class Anchor(Liquidation, Overseer, Market):
     def __init__(self, _logger, _terra, _wallet, _contract, _wrapper):
-        self._overseer = Overseer(_logger, _terra, _contract)
-        self._market = Market(_logger, _wallet, _contract, _wrapper)
-        self._liquidation = Liquidation(_logger, _terra, _wallet, _contract, _wrapper)
+        super(Anchor, self).__init__(_logger, _terra, _wallet, _contract, _wrapper)
+
