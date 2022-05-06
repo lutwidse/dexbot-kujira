@@ -7,7 +7,7 @@ from terra_sdk.core.broadcast import (
     BlockTxBroadcastResult,
 )
 from terra_sdk.core.wasm.msgs import MsgExecuteContract
-
+from terra_sdk.core import Coins, Coin
 
 class TerraWrapper:
     def __init__(self, _logger, _terra, _wallet, _sequence):
@@ -37,9 +37,10 @@ class TerraWrapper:
         except:
             self._logger.debug("[_create_transaction]", exc_info=True, stack_info=True)
 
-    def _create_msg_execute_contract(self, contract, execute_msg) -> MsgExecuteContract:
+    def _create_msg_execute_contract(self, contract, execute_msg, coins=Coins) -> MsgExecuteContract:
         return MsgExecuteContract(
             sender=self._wallet.key.acc_address,
             contract=contract,
             execute_msg=execute_msg,
+            coins=coins
         )
