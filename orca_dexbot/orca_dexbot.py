@@ -1,5 +1,7 @@
 import logging
 
+from pyparsing import token_map
+
 from .contract import MainnetContract, TestnetContract
 from .anchor_protocol.anchor import Anchor
 from terra_wrapper.wrapper import TerraWrapper
@@ -42,7 +44,7 @@ class OrcaDexbot:
             logger, self._terra, self._wallet, self._contract, self._wrapper
         )
 
-    def _usd_uusd_conversion(
+    def usd_uusd_conversion(
         self, usd, is_usd=True, is_str=False, is_need_prefix=False
     ) -> any:
         if is_usd:
@@ -53,25 +55,25 @@ class OrcaDexbot:
             result = str(result)
         if is_need_prefix:
             result = result + "uusd"
-        logger.info(f"[_usd_uusd_conversion] : {result}")
+        logger.info(f"[usd_uusd_conversion] : {result}")
         return result
 
-    def _get_native_token(self, wallet_address) -> dict:
+    def get_native_token(self, wallet_address) -> Coins:  # (Coins, dict):
         try:
             result = self._terra.bank.balance(wallet_address)
-            logger.info(f"[_get_native_token] : {result}")
+            logger.info(f"[get_native_token] : {result}")
             return result
         except:
-            logger.debug("[_get_native_token]", exc_info=True, stack_info=True)
+            logger.debug("[get_native_token]", exc_info=True, stack_info=True)
 
-    def _get_cw_token(self, token_address) -> dict:
+    def get_cw_token(self, token_address) -> dict:
         try:
             query = {"balance": {"address": self._wallet.key.acc_address}}
             result = self._terra.wasm.contract_query(token_address, query)
-            logger.info(f"[_get_cw_token] : {result}")
+            logger.info(f"[get_cw_token] : {result}")
             return result
         except:
-            logger.debug("[_get_cw_token]", exc_info=True, stack_info=True)
+            logger.debug("[get_cw_token]", exc_info=True, stack_info=True)
 
     def _create_transaction(self, msgs) -> BlockTxBroadcastResult:
         try:
@@ -92,25 +94,24 @@ class OrcaDexbot:
         except:
             logger.debug("[_create_transaction]", stack_info=True)
 
-    def test_transaction(self, amount):
+    def transaction_test(self, amount):
         msgs = [
             MsgSend(
                 from_address=self._wallet.key.acc_address,
                 to_address=self._wallet.key.acc_address,
-                amount=Coins([Coin("uusd", self._usd_uusd_conversion(amount))]),
+                amount=Coins([Coin("uusd", amount)]),
             )
         ]
         tx = self._wrapper._create_transaction(msgs)
-        logger.debug(f"[test_transaction] : {tx}")
+        logger.debug(f"[transaction_test] : {tx}")
 
-    def transaction_anchor(self, amount):
-        self._anchor._market.deposit_stable(self._usd_uusd_conversion(amount))
+    def transaction_anchor_deposit(self, amount):
+        self._anchor._market.deposit_stable(amount)
 
-    def transaction_anchor_aust(self, amount, premium_slot, ltv, cumulative_value):
-        cumulative_value *= 1000000
+    def transaction_kujira_bid(self, amount, premium_slot, ltv, cumulative_value):
         self._anchor._liquidation.submit_bid(
-            self._usd_uusd_conversion(amount, is_str=True),
-            premium_slot,
-            ltv,
-            self._usd_uusd_conversion(cumulative_value, is_str=True),
+            amount, premium_slot, ltv, cumulative_value
         )
+
+    def transaction_kujira_claim_bids(self, collateral_token, bids):
+        self._anchor._liquidation.claim_liquidations(collateral_token, bids)
