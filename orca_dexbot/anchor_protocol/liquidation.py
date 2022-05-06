@@ -3,7 +3,6 @@ import logging
 
 from terra_sdk.client.lcd import Wallet
 from terra_sdk.client.lcd import LCDClient
-from terra_sdk.core.wasm.msgs import MsgExecuteContract
 from terra_wrapper.wrapper import TerraWrapper
 from orca_dexbot import contract
 
@@ -46,19 +45,18 @@ class Liquidation:
             ).replace("'", '"')
             msg = base64.b64encode(msg.encode()).decode("ascii")
 
-            msgs = [
-                MsgExecuteContract(
-                    sender=self._wallet.key.acc_address,
-                    contract=self._contract.ANCHOR_AUST,
-                    execute_msg={
-                        "send": {
-                            "msg": msg,
-                            "amount": amount,
-                            "contract": self._contract.KUJIRA_ORCA_AUST,
-                        }
-                    },
-                )
-            ]
+            msgs = self._wrapper._create_msg_execute_contract(
+                self._contract.ANCHOR_AUST,
+                {
+                    "send": {
+                        "msg": msg,
+                        "amount": amount,
+                        "contract": self._contract.KUJIRA_ORCA_AUST,
+                    }
+                },
+            )
+            self._logger.debug(f"[claim_liquidations] : {msgs}")
+
             tx = self._wrapper._create_transaction(msgs)
             self._logger.debug(f"[submit_bid] : {tx}")
         except:
@@ -86,23 +84,19 @@ class Liquidation:
         except:
             self._logger.debug("[bids_by_user]", exc_info=True, stack_info=True)
 
-    def claim_liquidations(self, collateral_token = str, bids_idx = list):
+    def claim_liquidations(self, collateral_token=str, bids_idx=list):
         try:
-            query = {
+            msg = {
                 "claim_liquidations": {
                     "collateral_token": collateral_token,
                     "bids_idx": bids_idx,
                 }
             }
-            self._logger.debug(f"[claim_liquidations] : {query}")
+            self._logger.debug(f"[claim_liquidations] : {msg}")
 
-            msgs = [
-                MsgExecuteContract(
-                    sender=self._wallet.key.acc_address,
-                    contract=self._contract.KUJIRA_ORCA_AUST,
-                    execute_msg=query,
-                )
-            ]
+            msgs = self._wrapper._create_msg_execute_contract(
+                self._contract.KUJIRA_ORCA_AUST, msg
+            )
 
             tx = self._wrapper._create_transaction(msgs)
             self._logger.debug(f"[claim_liquidations] : {tx}")
