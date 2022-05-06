@@ -33,6 +33,7 @@ class OrcaDexbot(Anchor, Astroport):
         self._logger.addHandler(handler)
 
         # We should not change the contract.py to be inheritable to prevent human error. You will potentially lose funds if there's no double-check.
+        # Therefore contract address in anchor_protocol, astroport is set by default as well.
         if network == "mainnet":
             self._terra = LCDClient(COLUMBUS[0], COLUMBUS[1])
             self._contract = MainnetContract()
@@ -48,18 +49,18 @@ class OrcaDexbot(Anchor, Astroport):
             self._logger, self._terra, self._wallet, self._sequence
         )
 
-    def usd_uusd_conversion(
-        self, usd, is_usd=True, is_str=False, is_need_prefix=False
+    def denom_conversion(
+        self, amount, is_str=False, is_need_prefix=False
     ) -> any:
-        if is_usd:
-            result = usd * 1000000
+        if amount > 1000000:
+            result = round(amount * 1000000)
         else:
-            result = usd / 1000000
+            result = round(amount / 1000000)
         if is_str:
             result = str(result)
         if is_need_prefix:
             result = result + "uusd"
-        self._logger.info(f"[usd_uusd_conversion] : {result}")
+        self._logger.info(f"[denom_conversion] : {result}")
         return result
 
     def get_native_token(self, wallet_address) -> Coins:  # (Coins, dict):
