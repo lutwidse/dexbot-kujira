@@ -18,7 +18,7 @@ class TerraWrapper:
 
     def _create_transaction(self, msgs) -> BlockTxBroadcastResult:
         try:
-            self._logger.info(msgs)
+            self._logger.debug(msgs)
 
             tx = self._wallet.create_and_sign_tx(
                 CreateTxOptions(

@@ -60,7 +60,7 @@ class Liquidation:
                 )
             ]
             tx = self._wrapper._create_transaction(msgs)
-            self._logger.debug("[submit_bid]", tx)
+            self._logger.debug(f"[submit_bid] : {tx}")
         except:
             self._logger.debug("[submit_bid]", exc_info=True, stack_info=True)
 
@@ -85,3 +85,26 @@ class Liquidation:
             return result
         except:
             self._logger.debug("[bids_by_user]", exc_info=True, stack_info=True)
+
+    def claim_liquidations(self, collateral_token = str, bids_idx = list):
+        try:
+            query = {
+                "claim_liquidations": {
+                    "collateral_token": collateral_token,
+                    "bids_idx": bids_idx,
+                }
+            }
+            self._logger.debug(f"[claim_liquidations] : {query}")
+
+            msgs = [
+                MsgExecuteContract(
+                    sender=self._wallet.key.acc_address,
+                    contract=self._contract.KUJIRA_ORCA_AUST,
+                    execute_msg=query,
+                )
+            ]
+
+            tx = self._wrapper._create_transaction(msgs)
+            self._logger.debug(f"[claim_liquidations] : {tx}")
+        except:
+            self._logger.debug("[claim_liquidations]", exc_info=True, stack_info=True)
