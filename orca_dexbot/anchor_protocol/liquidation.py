@@ -3,6 +3,8 @@ import logging
 
 from terra_sdk.client.lcd import Wallet
 from terra_sdk.client.lcd import LCDClient
+from terra_sdk.core.wasm.msgs import MsgExecuteContract
+from terra_sdk.core import Coins, Coin
 from terra_wrapper.wrapper import TerraWrapper
 from orca_dexbot import contract
 
@@ -47,15 +49,15 @@ class Liquidation:
 
             msgs = [
                 self._wrapper._create_msg_execute_contract(
-                self._contract.ANCHOR_AUST,
-                {
-                    "send": {
-                        "msg": msg,
-                        "amount": amount,
-                        "contract": self._contract.KUJIRA_ORCA_AUST,
-                    }
-                },
-            )
+                    self._contract.ANCHOR_AUST,
+                    {
+                        "send": {
+                            "msg": msg,
+                            "amount": amount,
+                            "contract": self._contract.KUJIRA_ORCA_AUST,
+                        }
+                    },
+                )
             ]
             self._logger.debug(f"[claim_liquidations] : {msgs}")
 
