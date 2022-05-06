@@ -1,6 +1,6 @@
 class MainnetContract(object):
     ANCHOR_MARKET = "terra1sepfj7s0aeg5967uxnfk4thzlerrsktkpelm5s"
-    ANCHOR_AUST = "terra1ajt556dpzvjwl0kl5tzku3fc3p3knkg9mkv8jl"
+    ANCHOR_AUST = "terra1hzh9vpxhsk8253se0vv5jj6etdvxu3nv8z07zu"
     ANCHOR_BLUNA = "terra1kc87mu460fwkqte29rquh4hc20m54fxwtsx7gp"
     ANCHOR_LIQUIDATION_QUEUE = "terra1e25zllgag7j9xsun3me4stnye2pcg66234je3u"
 
