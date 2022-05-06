@@ -3,8 +3,8 @@ import logging
 from terra_sdk.client.lcd import LCDClient
 from terra_sdk.client.lcd import Wallet
 from terra_sdk.core import Coins, Coin
-from terra_sdk.core.wasm.msgs import MsgExecuteContract
 from orca_dexbot import contract
+from terra_wrapper.wrapper import TerraWrapper
 
 
 class Overseer:
