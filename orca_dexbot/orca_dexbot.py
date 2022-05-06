@@ -60,7 +60,7 @@ class OrcaDexbot:
     def _get_native_token(self, wallet_address) -> dict:
         try:
             result = self._terra.bank.balance(wallet_address)
-            logger.info(result)
+            logger.info('[_get_native_token]', result)
             return result
         except:
             logger.debug('[_get_native_token]', exc_info=True, stack_info=True)
@@ -69,14 +69,14 @@ class OrcaDexbot:
         try:
             query = {"balance": {"address": self._wallet.key.acc_address}}
             result = self._terra.wasm.contract_query(token_address, query)
-            logger.info(result)
+            logger.info('[_get_cw_token]', result)
             return result
         except:
             logger.debug('[_get_cw_token]', exc_info=True, stack_info=True)
 
     def _create_transaction(self, msgs) -> BlockTxBroadcastResult:
         try:
-            logger.info(msgs)
+            logger.info('[_create_transaction]', msgs)
 
             tx = self._wallet.create_and_sign_tx(
                 CreateTxOptions(
@@ -102,7 +102,7 @@ class OrcaDexbot:
             )
         ]
         tx = self._wrapper._create_transaction(msgs)
-        logger.debug(tx)
+        logger.debug('[test_transaction]', tx)
 
     def transaction_anchor(self, amount):
         msgs = [
@@ -114,7 +114,8 @@ class OrcaDexbot:
             )
         ]
         tx = self._wrapper._create_transaction(msgs)
-        logger.info(tx)
+        logger.info('[transaction_anchor]', tx)
 
     def transaction_anchor_aust(self, amount, premium_slot, ltv, cumulative_value):
-        self._liquidation.submit_bid(self._usd_uusd_conversion(amount), premium_slot, ltv, cumulative_value)
+        cumulative_value *= 1000000
+        self._liquidation.submit_bid(self._usd_uusd_conversion(amount, is_str=True), premium_slot, ltv, self._usd_uusd_conversion(cumulative_value, is_str=True))

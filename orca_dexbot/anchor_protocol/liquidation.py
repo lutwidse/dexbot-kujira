@@ -16,7 +16,7 @@ class Liquidation:
         self._contract: contract = _contract
         self._wrapper: TerraWrapper = _wrapper
 
-    def submit_bid(self, amount, premium_slot, ltv, cumulative_value):
+    def submit_bid(self, amount=str, premium_slot=int, ltv=int, cumulative_value=str):
         # TODO:UST to aUST conversion
         msg = str(
             {
@@ -52,4 +52,4 @@ class Liquidation:
             )
         ]
         tx = self._wrapper._create_transaction(msgs)
-        self._logger.info(tx)
+        self._logger.info("[submit_bid]", tx)
