@@ -19,3 +19,21 @@ class Overseer:
             return result
         except:
             self._logger.debug("[_get_cw_token]", exc_info=True, stack_info=True)
+
+
+class Market:
+    def __init__(self, _logger, _wallet, _contract):
+        self._logger: logging = _logger
+        self._wallet: Wallet = _wallet
+        self._contract: contract = _contract
+
+    def deposit_stable(self, amount):
+        msgs = [
+            MsgExecuteContract(
+                sender=self._wallet.key.acc_address,
+                contract=self._contract.ANCHOR_MARKET,
+                execute_msg={"deposit_stable": {}},
+                coins=Coins([Coin("uusd"), amount]),
+            )
+        ]
+        tx = self._wrapper._create_transaction(msgs)
