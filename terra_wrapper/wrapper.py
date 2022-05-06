@@ -7,7 +7,7 @@ from terra_sdk.core.broadcast import (
     BlockTxBroadcastResult,
 )
 from terra_sdk.core.wasm.msgs import MsgExecuteContract
-from terra_sdk.core import Coins, Coin
+from terra_sdk.core import Coins
 
 class TerraWrapper:
     def __init__(self, _logger, _terra, _wallet, _sequence):

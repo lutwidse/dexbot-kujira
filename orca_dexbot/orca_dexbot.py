@@ -1,7 +1,9 @@
 import logging
 
-from .contract import MainnetContract, TestnetContract
 from .anchor_protocol.anchor import Anchor
+from orca_dexbot.astroport.astroport import Astroport
+
+from .contract import MainnetContract, TestnetContract
 from terra_wrapper.wrapper import TerraWrapper
 
 from terra_sdk.client.lcd import LCDClient
@@ -18,7 +20,7 @@ COLUMBUS = ["https://lcd.terra.dev", "columbus-5"]
 BOMBAY = ["https://bombay-lcd.terra.dev/", "bombay-12"]
 
 
-class OrcaDexbot(Anchor):
+class OrcaDexbot(Anchor, Astroport):
     def __init__(self, network, mnemonic):
 
         self._logger = logging.getLogger(__name__)
@@ -42,7 +44,9 @@ class OrcaDexbot(Anchor):
         self._wallet = self._terra.wallet(MnemonicKey(mnemonic=mnemonic))
         self._sequence = self._wallet.sequence()
 
-        self._wrapper = TerraWrapper(self._logger, self._terra, self._wallet, self._sequence)
+        self._wrapper = TerraWrapper(
+            self._logger, self._terra, self._wallet, self._sequence
+        )
 
     def usd_uusd_conversion(
         self, usd, is_usd=True, is_str=False, is_need_prefix=False
@@ -77,26 +81,7 @@ class OrcaDexbot(Anchor):
 
     def get_bluna_contract(self) -> str:
         return self._contract.ANCHOR_BLUNA
-
-    def _create_transaction(self, msgs) -> BlockTxBroadcastResult:
-        try:
-            self._logger.info("[_create_transaction]", msgs)
-
-            tx = self._wallet.create_and_sign_tx(
-                CreateTxOptions(
-                    msgs=msgs,
-                    gas="auto",
-                    fee_denoms="uusd",
-                    gas_adjustment=2,
-                    sequence=self._sequence,
-                )
-            )
-            self._sequence = self._sequence + 1
-            result = self._terra.tx.broadcast(tx)
-            return result
-        except:
-            self._logger.debug("[_create_transaction]", stack_info=True)
-
+        
     def transaction_test(self, amount):
         msgs = [
             MsgSend(
@@ -107,14 +92,3 @@ class OrcaDexbot(Anchor):
         ]
         tx = self._wrapper._create_transaction(msgs)
         self._logger.debug(f"[transaction_test] : {tx}")
-
-    def transaction_anchor_deposit(self, amount):
-        self.deposit_stable(amount)
-
-    def transaction_kujira_bid(
-        self, amount, premium_slot, collateral_token, ltv, cumulative_value
-    ):
-        self.submit_bid(amount, premium_slot, collateral_token, ltv, cumulative_value)
-
-    def transaction_kujira_claim_bids(self, collateral_token, bids):
-        self.claim_liquidations(collateral_token, bids)
