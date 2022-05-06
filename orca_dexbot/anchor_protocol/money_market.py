@@ -26,10 +26,11 @@ class Overseer:
 
 
 class Market:
-    def __init__(self, _logger, _wallet, _contract):
+    def __init__(self, _logger, _wallet, _contract, _wrapper):
         self._logger: logging = _logger
         self._wallet: Wallet = _wallet
         self._contract: contract = _contract
+        self._wrapper = _wrapper
 
     def deposit_stable(self, amount):
         msgs = [
