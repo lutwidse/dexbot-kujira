@@ -27,10 +27,10 @@ logger.addHandler(handler)
 
 class OrcaDexbot:
     def __init__(self, network, mnemonic):
-        if network == 'mainnet':
+        if network == "mainnet":
             self._terra = LCDClient(COLUMBUS[0], COLUMBUS[1])
             self._contract = MainnetContract()
-        elif network == 'testnet':
+        elif network == "testnet":
             self._terra = LCDClient(BOMBAY[0], BOMBAY[1])
             self._contract = TestnetContract()
 
@@ -38,9 +38,13 @@ class OrcaDexbot:
         self._sequence = self._wallet.sequence()
 
         self._wrapper = TerraWrapper(logger, self._terra, self._wallet, self._sequence)
-        self._anchor = Anchor(logger, self._terra, self._wallet, self._contract, self._wrapper)
+        self._anchor = Anchor(
+            logger, self._terra, self._wallet, self._contract, self._wrapper
+        )
 
-    def _usd_uusd_conversion(self, usd, is_usd=True, is_str=False, is_need_prefix=False) -> any:
+    def _usd_uusd_conversion(
+        self, usd, is_usd=True, is_str=False, is_need_prefix=False
+    ) -> any:
         if is_usd:
             result = usd * 1000000
         else:
@@ -48,6 +52,7 @@ class OrcaDexbot:
         if is_str:
             result = str(result)
         if is_need_prefix:
+            result = result + "uusd"
         logger.info(f"[_usd_uusd_conversion] : {result}")
         return result
 
@@ -103,4 +108,9 @@ class OrcaDexbot:
 
     def transaction_anchor_aust(self, amount, premium_slot, ltv, cumulative_value):
         cumulative_value *= 1000000
-        self._anchor._liquidation.submit_bid(self._usd_uusd_conversion(amount, is_str=True), premium_slot, ltv, self._usd_uusd_conversion(cumulative_value, is_str=True))
+        self._anchor._liquidation.submit_bid(
+            self._usd_uusd_conversion(amount, is_str=True),
+            premium_slot,
+            ltv,
+            self._usd_uusd_conversion(cumulative_value, is_str=True),
+        )
