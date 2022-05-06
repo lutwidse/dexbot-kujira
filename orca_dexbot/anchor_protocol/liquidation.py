@@ -16,13 +16,21 @@ class Liquidation:
         self._contract: contract = _contract
         self._wrapper: TerraWrapper = _wrapper
 
-    def submit_bid(self, amount=str, premium_slot=int, ltv=int, cumulative_value=str):
+    def submit_bid(
+        self,
+        collateral_token=contract,
+        amount=str,
+        premium_slot=int,
+        ltv=int,
+        cumulative_value=str,
+    ):
+        try:
         # TODO:UST to aUST conversion
         msg = str(
             {
                 "submit_bid": {
                     "premium_slot": premium_slot,
-                    "collateral_token": self._contract.ANCHOR_BLUNA,
+                        "collateral_token": collateral_token,
                     "strategy": {
                         "activate_at": {
                             "ltv": ltv,
