@@ -45,14 +45,16 @@ class OrcaDexbot:
             logger, self._terra, self._wallet, self._contract, self._wrapper
         )
 
-    def _usd_uusd_conversion(self, usd, is_usd=True, is_str=False) -> any:
+    def _usd_uusd_conversion(self, usd, is_usd=True, is_str=False, is_need_prefix=False) -> any:
         if is_usd:
             result = usd * 1000000
         else:
             result = usd / 1000000
         if is_str:
-            result = str(result) + 'uusd'
-        logger.info(result)
+            result = str(result)
+        if is_need_prefix:
+            result = result + 'uusd'
+        logger.info('[_usd_uusd_conversion]', result)
         return result
 
     def _get_native_token(self, wallet_address) -> dict:
