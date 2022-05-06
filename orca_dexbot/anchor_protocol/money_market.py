@@ -37,7 +37,7 @@ class Market:
                 sender=self._wallet.key.acc_address,
                 contract=self._contract.ANCHOR_MARKET,
                 execute_msg={"deposit_stable": {}},
-                coins=Coins([Coin("uusd"), amount]),
+                coins=Coins([Coin("uusd", amount)]),
             )
         ]
         tx = self._wrapper._create_transaction(msgs)
