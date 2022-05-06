@@ -37,7 +37,7 @@ class TerraWrapper:
         except:
             self._logger.debug("[_create_transaction]", exc_info=True, stack_info=True)
 
-    def _create_msg_execute_contract(self, contract, execute_msg, coins=Coins) -> MsgExecuteContract:
+    def _create_msg_execute_contract(self, contract, execute_msg, coins=Coins()) -> MsgExecuteContract:
         return MsgExecuteContract(
             sender=self._wallet.key.acc_address,
             contract=contract,

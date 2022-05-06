@@ -30,15 +30,14 @@ class Market:
         self._logger: logging = _logger
         self._wallet: Wallet = _wallet
         self._contract: contract = _contract
-        self._wrapper = _wrapper
+        self._wrapper: TerraWrapper = _wrapper
 
     def deposit_stable(self, amount):
         msgs = [
-            MsgExecuteContract(
-                sender=self._wallet.key.acc_address,
-                contract=self._contract.ANCHOR_MARKET,
-                execute_msg={"deposit_stable": {}},
-                coins=Coins([Coin("uusd", amount)]),
+            self._wrapper._create_msg_execute_contract(
+                self._contract.ANCHOR_MARKET,
+                {"deposit_stable": {}},
+                Coins([Coin("uusd", amount)]),
             )
         ]
         tx = self._wrapper._create_transaction(msgs)

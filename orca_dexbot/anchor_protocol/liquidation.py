@@ -45,7 +45,8 @@ class Liquidation:
             ).replace("'", '"')
             msg = base64.b64encode(msg.encode()).decode("ascii")
 
-            msgs = self._wrapper._create_msg_execute_contract(
+            msgs = [
+                self._wrapper._create_msg_execute_contract(
                 self._contract.ANCHOR_AUST,
                 {
                     "send": {
@@ -55,6 +56,7 @@ class Liquidation:
                     }
                 },
             )
+            ]
             self._logger.debug(f"[claim_liquidations] : {msgs}")
 
             tx = self._wrapper._create_transaction(msgs)
