@@ -17,9 +17,9 @@ class Liquidation:
 
     def submit_bid(
         self,
-        collateral_token=contract,
         amount=str,
         premium_slot=int,
+        collateral_token=str,
         ltv=int,
         cumulative_value=str,
     ):
