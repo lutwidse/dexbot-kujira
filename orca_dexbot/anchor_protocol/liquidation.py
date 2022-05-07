@@ -57,7 +57,7 @@ class Liquidation(object):
                     },
                 )
             ]
-            self._logger.debug(f"[claim_liquidations] : {msgs}")
+            self._logger.debug(f"[submit_bid] : {msgs}")
 
             tx = self._wrapper._create_transaction(msgs)
             self._logger.debug(f"[submit_bid] : {tx}")
