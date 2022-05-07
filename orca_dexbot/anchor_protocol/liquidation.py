@@ -45,8 +45,7 @@ class Liquidation(object):
             ).replace("'", '"')
             msg = base64.b64encode(msg.encode()).decode("ascii")
 
-            msgs = [
-                self._wrapper._create_msg_execute_contract(
+            msgs = self._wrapper._create_msg_execute_contract(
                     self._contract.ANCHOR_AUST,
                     {
                         "send": {
@@ -56,7 +55,7 @@ class Liquidation(object):
                         }
                     },
                 )
-            ]
+            
             self._logger.debug(f"[submit_bid] : {msgs}")
 
             tx = self._wrapper._create_transaction(msgs)
@@ -89,16 +88,17 @@ class Liquidation(object):
     def claim_liquidations(self, collateral_token=str, bids_idx=list):
         try:
             msg = {
-                "claim_liquidations": {
-                    "collateral_token": collateral_token,
-                    "bids_idx": bids_idx,
+                    "claim_liquidations": {
+                        "collateral_token": collateral_token,
+                        "bids_idx": bids_idx,
+                    }
                 }
-            }
+            
 
             msgs = self._wrapper._create_msg_execute_contract(
                 self._contract.KUJIRA_ORCA_AUST, msg
             )
-            self._logger.debug(f"[claim_liquidations] : {msg}")
+            self._logger.debug(f"[claim_liquidations] : {msgs}")
 
             tx = self._wrapper._create_transaction(msgs)
             self._logger.debug(f"[claim_liquidations] : {tx}")

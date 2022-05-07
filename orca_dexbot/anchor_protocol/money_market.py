@@ -35,13 +35,12 @@ class Market(object):
 
     def deposit_stable(self, amount):
         try:
-            msgs = [
-                self._wrapper._create_msg_execute_contract(
+            msgs = self._wrapper._create_msg_execute_contract(
                     self._contract.ANCHOR_MARKET,
                     {"deposit_stable": {}},
                     Coins([Coin("uusd", amount)]),
                 )
-            ]
+            
             self._logger.debug(f"[transaction_anchor] : {msgs}")
 
             tx = self._wrapper._create_transaction(msgs)
