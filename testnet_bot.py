@@ -16,6 +16,7 @@ wallet_address = dexbot.get_wallet_address()
 BLUNA_CONTRACT = dexbot.get_bluna_contract()
 AUST_CONTRACT = dexbot.get_aust_contract()
 
+WAIT_FETCH = 3
 
 def get_bids():
     try:
@@ -68,6 +69,7 @@ def bot(
                 logger.info("[Bot] Deposit {deposit_ust} UST to Anchor")
                 dexbot.deposit_stable(deposit_ust)
                 logger.info("[Bot] Deposited")
+                time.sleep(WAIT_FETCH)
 
                 aust_balance = dexbot.get_cw_token(AUST_CONTRACT).get("balance")
                 logger.info("[Bot] aUST : {aust_balance}")
@@ -80,22 +82,28 @@ def bot(
                         at_risk_collateral_threshold * 1000000, is_str=True
                     ),
                 )
+                time.sleep(WAIT_FETCH)
 
         if auto_claim:
             bids = get_bids()
             claimable_bids = get_claimable_bids(bids)
+            if claimable_bids is None:
+                return
             if len(claimable_bids) > 0:
                 logger.info(f"[Bot] Found claimable bids")
                 dexbot.claim_liquidations(claimable_bids)
                 logger.info(f"[Bot] Claimed")
+                time.sleep(WAIT_FETCH)
 
                 bluna_balance = dexbot.get_cw_token(BLUNA_CONTRACT).get("balance")
                 bluna_balance = str(bluna_balance)
                 logger.info(f"[Bot] bLUNA : {bluna_balance}")
+                time.sleep(WAIT_FETCH)
 
                 logger.info(f"[Bot] Swap {bluna_balance} bLUNA to LUNA")
                 dexbot.swap_bluna_to_luna(bluna_balance)
                 logger.info(f"[Bot] Swapped")
+                time.sleep(WAIT_FETCH)
 
                 native_token = dexbot.get_native_token(wallet_address)
                 luna_balance = str(native_token[0].get("uluna").amount)
