@@ -19,7 +19,8 @@ class Overseer(object):
             result = self._terra.wasm.contract_query(
                 self._contract.ANCHOR_MARKET, query
             )
-            self._logger.info(result)
+            self._logger.debug(f"[_get_cw_token] : {result}")
+
             return result
         except:
             self._logger.debug("[_get_cw_token]", exc_info=True, stack_info=True)
@@ -33,12 +34,17 @@ class Market(object):
         self._wrapper: TerraWrapper = _wrapper
 
     def deposit_stable(self, amount):
-        msgs = [
-            self._wrapper._create_msg_execute_contract(
-                self._contract.ANCHOR_MARKET,
-                {"deposit_stable": {}},
-                Coins([Coin("uusd", amount)]),
-            )
-        ]
-        tx = self._wrapper._create_transaction(msgs)
-        self._logger.info(f"[transaction_anchor] : {tx}")
+        try:
+            msgs = [
+                self._wrapper._create_msg_execute_contract(
+                    self._contract.ANCHOR_MARKET,
+                    {"deposit_stable": {}},
+                    Coins([Coin("uusd", amount)]),
+                )
+            ]
+            self._logger.debug(f"[transaction_anchor] : {msgs}")
+
+            tx = self._wrapper._create_transaction(msgs)
+            self._logger.debug(f"[transaction_anchor] : {tx}")
+        except:
+            self._logger.debug("[transaction_anchor]", exc_info=True, stack_info=True)

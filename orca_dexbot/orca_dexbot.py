@@ -44,34 +44,30 @@ class OrcaDexbot(Anchor, Astroport):
             self._logger, self._terra, self._wallet, self._sequence
         )
 
-    def denom_conversion(
-        self, amount, multiply=True, is_str=False, is_need_prefix=False
-    ) -> any:
-        if multiply:
-            result = round(int(amount) * 1000000)
-        else:
-            result = round(int(amount) / 1000000)
-        if is_str:
-            result = str(result)
-        if is_need_prefix:
-            result = result + "uusd"
-        self._logger.info(f"[denom_conversion] : {result}")
-        return result
+    def denom_conversion(self, amount, multiply=True, is_str=False, is_need_prefix=False) -> any:
+        try:
+            if multiply:
+                result = round(int(amount) * 1000000)
+            else:
+                result = round(int(amount) / 1000000)
+            if is_str:
+                result = str(result)
+            if is_need_prefix:
+                result = result + "uusd"
+            return result
+        except:
+            self._logger.debug("[denom_conversion]", exc_info=True, stack_info=True)
 
     def get_native_token(self, wallet_address) -> Coins:  # (Coins, dict):
         try:
-            result = self._terra.bank.balance(wallet_address)
-            self._logger.info(f"[get_native_token] : {result}")
-            return result
+            return self._terra.bank.balance(wallet_address)
         except:
             self._logger.debug("[get_native_token]", exc_info=True, stack_info=True)
 
     def get_cw_token(self, token_address) -> dict:
         try:
             query = {"balance": {"address": self._wallet.key.acc_address}}
-            result = self._terra.wasm.contract_query(token_address, query)
-            self._logger.info(f"[get_cw_token] : {result}")
-            return result
+            return self._terra.wasm.contract_query(token_address, query)
         except:
             self._logger.debug("[get_cw_token]", exc_info=True, stack_info=True)
 

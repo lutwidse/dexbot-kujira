@@ -94,11 +94,11 @@ class Liquidation(object):
                     "bids_idx": bids_idx,
                 }
             }
-            self._logger.debug(f"[claim_liquidations] : {msg}")
 
             msgs = self._wrapper._create_msg_execute_contract(
                 self._contract.KUJIRA_ORCA_AUST, msg
             )
+            self._logger.debug(f"[claim_liquidations] : {msg}")
 
             tx = self._wrapper._create_transaction(msgs)
             self._logger.debug(f"[claim_liquidations] : {tx}")

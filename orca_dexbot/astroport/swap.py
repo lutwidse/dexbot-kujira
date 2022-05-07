@@ -1,6 +1,5 @@
 import logging, base64
 from terra_sdk.client.lcd import Wallet
-from terra_sdk.core.wasm.msgs import MsgExecuteContract
 from terra_sdk.core import Coins, Coin
 from terra_wrapper.wrapper import TerraWrapper
 from orca_dexbot import contract
@@ -16,10 +15,9 @@ class Swap:
         try:
             msg = str({"swap": {"max_spread": max_spread}}).replace("'", '"')
             msg = base64.b64encode(msg.encode()).decode("ascii")
-
+            
             msgs = [
-                MsgExecuteContract(
-                    sender=self._wallet.key.acc_address,
+                self._wrapper._create_msg_execute_contract(
                     contract=self._contract.ANCHOR_BLUNA,
                     execute_msg={
                         "send": {
@@ -30,6 +28,8 @@ class Swap:
                     },
                 )
             ]
+            self._logger.debug(f"[swap_bluna_to_luna] : {msgs}")
+
             tx = self._wrapper._create_transaction(msgs)
             self._logger.debug(f"[swap_bluna_to_luna] : {tx}")
         except:
@@ -52,13 +52,14 @@ class Swap:
             }
 
             msgs = [
-                MsgExecuteContract(
-                    sender=self._wallet.key.acc_address,
+                self._wrapper._create_msg_execute_contract(
                     contract=self._contract.ASTROPORT_LUNA_UST,
                     execute_msg=msg,
                     coins=Coins([Coin("uluna", amount)]),
                 )
             ]
+            self._logger.debug(f"[swap_luna_to_ust] : {msgs}")
+
             tx = self._wrapper._create_transaction(msgs)
             self._logger.debug(f"[swap_luna_to_ust] : {tx}")
         except:
