@@ -66,13 +66,13 @@ def bot(
             amount_threshold = dexbot.denom_conversion(amount_threshold)
             if ust_balance > amount_threshold * 1.2:
                 deposit_ust = str(ust_balance - amount_threshold)
-                logger.info("[Bot] Deposit {deposit_ust} UST to Anchor")
+                logger.info(f"[Bot] Deposit {deposit_ust} UST to Anchor")
                 dexbot.deposit_stable(deposit_ust)
                 logger.info("[Bot] Deposited")
                 time.sleep(WAIT_FETCH)
 
                 aust_balance = dexbot.get_cw_token(AUST_CONTRACT).get("balance")
-                logger.info("[Bot] aUST : {aust_balance}")
+                logger.info(f"[Bot] aUST : {aust_balance}")
                 dexbot.submit_bid(
                     amount=aust_balance,
                     collateral_token=dexbot.get_bluna_contract(),
@@ -91,7 +91,7 @@ def bot(
                 return
             if len(claimable_bids) > 0:
                 logger.info(f"[Bot] Found claimable bids")
-                dexbot.claim_liquidations(claimable_bids)
+                dexbot.claim_liquidations(dexbot.get_bluna_contract(), claimable_bids)
                 logger.info(f"[Bot] Claimed")
                 time.sleep(WAIT_FETCH)
 
