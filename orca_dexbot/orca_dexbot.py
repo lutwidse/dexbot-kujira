@@ -37,7 +37,6 @@ class OrcaDexbot(Anchor, Astroport):
             self._terra = LCDClient(BOMBAY[0], BOMBAY[1])
             self._contract = TestnetContract()
 
-        # TODO: Save mnemonic securely on local with bcrypt
         self._wallet = self._terra.wallet(MnemonicKey(mnemonic=mnemonic))
         self._sequence = self._wallet.sequence()
 
@@ -81,7 +80,7 @@ class OrcaDexbot(Anchor, Astroport):
 
     def get_bluna_contract(self) -> str:
         return self._contract.ANCHOR_BLUNA
-    
+
     def get_aust_contract(self) -> str:
         return self._contract.ANCHOR_AUST
 
