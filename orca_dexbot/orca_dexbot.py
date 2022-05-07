@@ -50,12 +50,12 @@ class OrcaDexbot(Anchor, Astroport):
         )
 
     def denom_conversion(
-        self, amount, is_str=False, is_need_prefix=False
+        self, amount, multiply=True, is_str=False, is_need_prefix=False
     ) -> any:
-        if amount > 1000000:
-            result = round(amount * 1000000)
+        if multiply:
+            result = round(int(amount) * 1000000)
         else:
-            result = round(amount / 1000000)
+            result = round(int(amount) / 1000000)
         if is_str:
             result = str(result)
         if is_need_prefix:
