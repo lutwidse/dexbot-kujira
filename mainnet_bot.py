@@ -105,7 +105,7 @@ def bot(
     except:
         logger.info("[Bot] Error", exc_info=True, stack_info=True)
 
-if __name__ == "__init__":
+if __name__ == "__main__":
     logger.info("[Bot] Start")
     while True:
         run_pending()
